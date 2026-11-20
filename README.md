@@ -12,6 +12,31 @@ The goal is to mirror how a hospital using Epic organizes data: operational tabl
 | 4. Inject dirty data (duplicate patients, bad dates, negative costs, a renamed column) and merge duplicates with fuzzy matching | Done on DuckDB; repeated on Snowflake in week 2 |
 | 5. FHIR in MongoDB, loaded with Airbyte | Week 3 |
 
+## Architecture
+
+The layers follow how a hospital that uses Epic organizes its data. Epic stores live data in Chronicles, copies it to Clarity (normalized tables) overnight, and then builds Caboodle (a star schema for reporting). This project mirrors that flow with synthetic data.
+
+```mermaid
+flowchart LR
+    A["Synthea<br/>synthetic patients<br/>CSV files"] --> B["raw<br/>files as text<br/>(Clarity-style source copy)"]
+    B --> C["staging<br/>typed, renamed views<br/>(dbt)"]
+    C --> D["marts<br/>star schema<br/>(Caboodle-style, dbt)"]
+    D --> E["aggregates<br/>small summary tables"]
+    E --> F["Parquet files<br/>app_data/"]
+    F --> G["Streamlit report"]
+    D -. planned .-> H["OMOP-lite<br/>standard vocabulary"]
+    I["Injected faults<br/>duplicates, bad dates,<br/>negative costs"] -. breaks .-> B
+    D --> J["dbt tests<br/>23 generic and SQL tests"]
+    B --> K["Splink<br/>fuzzy duplicate matching"]
+```
+
+| This project | Epic equivalent | What it holds |
+| --- | --- | --- |
+| `raw` schema | Clarity | Source tables copied as they are, every column as text |
+| `staging` | Clarity cleanup | Typed dates, numbers and names, one model per source table |
+| `marts` | Caboodle | `dim_patient`, `fact_encounter`, `fact_condition`, `fact_admission` |
+| OMOP-lite (planned) | OMOP | Standard concept names so data from different systems can be combined |
+
 ## Run it on your computer
 
 You need Python 3.10 or newer and Java 11 or newer (check with `java -version`; if missing, install Temurin from https://adoptium.net).
