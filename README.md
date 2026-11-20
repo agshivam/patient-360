@@ -9,7 +9,7 @@ The goal is to mirror how a hospital using Epic organizes data: operational tabl
 | 1. Generate synthetic patients, load into DuckDB, build marts, publish a Streamlit report | Done in this starter |
 | 2. dbt models and tests on DuckDB | Done |
 | 3. Move to Snowflake (raw layer, dbt, masking policies, role-based access) | Week 2 |
-| 4. Inject dirty data (duplicate patients, late labs, changed columns) and merge duplicates with fuzzy matching | Week 2 to 3 |
+| 4. Inject dirty data (duplicate patients, bad dates, negative costs, a renamed column) and merge duplicates with fuzzy matching | Done on DuckDB; repeated on Snowflake in week 2 |
 | 5. FHIR in MongoDB, loaded with Airbyte | Week 3 |
 
 ## Run it on your computer

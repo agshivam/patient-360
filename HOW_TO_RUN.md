@@ -104,6 +104,22 @@ git push
 
 If the app is deployed on Streamlit Community Cloud, it updates itself within a minute.
 
+## Break it on purpose (the interesting part)
+
+This shows that the checks catch real problems. Run it after step 4 (`load_raw.py`).
+
+```bash
+python scripts/inject_dirty_data.py        # adds duplicate patients, bad dates and negative costs
+cd dbt && dbt build && cd ..               # you should see FAIL lines: that is the point
+python scripts/dedupe_patients.py          # fuzzy matching finds the duplicates and prints precision and recall
+```
+
+What you should see: `assert_encounters_end_after_start` and `assert_no_negative_claim_cost` fail with 5 rows each, `assert_no_exact_duplicate_patients` finds only the duplicates with no typo, and Splink finds all of them.
+
+Optional, to prove a renamed source column fails loudly: run `python scripts/load_raw.py` to reset, then `python scripts/inject_dirty_data.py --break-schema`, then `dbt build`. It stops with a column-not-found error in `stg_patients`.
+
+To go back to clean data, run `python scripts/load_raw.py` again, then `dbt build`.
+
 ## Deploy the report for free
 
 1. Go to https://share.streamlit.io and sign in with GitHub.
@@ -130,7 +146,7 @@ Free apps sleep when nobody visits. The first load after sleeping takes a little
 
 | Path | Purpose |
 | --- | --- |
-| `scripts/` | Generate patients, load the raw layer, export report data |
+| `scripts/` | Generate patients, load the raw layer, inject faults, match duplicates, export report data |
 | `dbt/models/staging/` | Typed views over the raw tables |
 | `dbt/models/marts/` | Star schema and report summary tables |
 | `dbt/tests/` | Tests written in SQL |

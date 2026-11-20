@@ -57,8 +57,8 @@ cols[2].metric("Hospital stays", f"{int(kpis.admissions):,}")
 cols[3].metric("30-day readmission rate", f"{kpis.readmission_rate_pct}%")
 cols[4].metric("Average stay", f"{kpis.avg_stay_days} days")
 
-tab_activity, tab_adm, tab_cond, tab_cost, tab_quality, tab_mask = st.tabs(
-    ["Activity", "Admissions", "Conditions", "Costs", "Data quality", "Masked patients"]
+tab_activity, tab_adm, tab_cond, tab_cost, tab_quality, tab_dupes, tab_mask = st.tabs(
+    ["Activity", "Admissions", "Conditions", "Costs", "Data quality", "Duplicate patients", "Masked patients"]
 )
 
 with tab_activity:
@@ -146,6 +146,21 @@ with tab_quality:
         st.error(f"{failed} of {len(checks)} checks failed.")
     st.dataframe(checks, width="stretch", hide_index=True)
     st.caption("These checks run every time the data is rebuilt. Later versions will inject bad data on purpose to prove they catch it.")
+
+with tab_dupes:
+    st.subheader("Finding the same person registered twice")
+    dupe_file = DATA_DIR / "agg_dedupe_metrics.parquet"
+    if dupe_file.exists():
+        metrics = load("agg_dedupe_metrics")
+        st.dataframe(metrics, width="stretch", hide_index=True)
+        st.caption(
+            "Test run: duplicates were injected on purpose (typos in names, missing SSN, different city). "
+            "Exact matching on name and birth date finds only the ones with no typo. "
+            "Fuzzy matching with Splink finds the rest. Precision is the share of reported matches that are real, "
+            "recall is the share of real duplicates found."
+        )
+    else:
+        st.info("Run scripts/inject_dirty_data.py and scripts/dedupe_patients.py to fill this tab.")
 
 with tab_mask:
     st.subheader("What an analyst sees")
