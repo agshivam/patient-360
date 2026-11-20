@@ -60,7 +60,7 @@ def main() -> None:
     csv_dir = OUT / "csv"
     files = sorted(csv_dir.glob("*.csv")) if csv_dir.exists() else []
     print(f"\nDone. {len(files)} CSV files in {csv_dir}")
-    print("Next: python scripts/build_duckdb.py")
+    print("Next: python scripts/load_raw.py, then cd dbt && dbt build")
 
 
 if __name__ == "__main__":

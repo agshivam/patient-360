@@ -1,0 +1,20 @@
+version: 2
+
+models:
+  - name: stg_patients
+    description: One row per patient with typed dates. Names and SSN are still unmasked here. Masking happens in dim_patient.
+    columns:
+      - name: patient_id
+        tests: [unique, not_null]
+  - name: stg_encounters
+    description: One row per encounter with typed timestamps and costs.
+    columns:
+      - name: encounter_id
+        tests: [unique, not_null]
+  - name: stg_conditions
+    description: One row per diagnosis.
+  - name: stg_payers
+    description: One row per insurance payer.
+    columns:
+      - name: payer_id
+        tests: [unique, not_null]

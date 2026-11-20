@@ -21,7 +21,7 @@ def load(name: str):
 
 
 if not (DATA_DIR / "agg_kpis.parquet").exists():
-    st.error("No report data found. Run: python scripts/build_duckdb.py")
+    st.error("No report data found. Run: python scripts/export_app_data.py")
     st.stop()
 
 kpis = load("agg_kpis").iloc[0]

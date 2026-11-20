@@ -1,0 +1,53 @@
+version: 2
+
+models:
+  - name: dim_patient
+    description: One row per patient. Names and SSN are masked.
+    columns:
+      - name: patient_id
+        tests: [unique, not_null]
+      - name: gender
+        tests:
+          - accepted_values:
+              arguments:
+                values: ["M", "F"]
+      - name: birth_date
+        tests: [not_null]
+      - name: ssn_masked
+        description: Shows only the last four digits. The test in tests/assert_ssn_is_masked.sql guards this.
+  - name: fact_encounter
+    description: One row per encounter (visit, admission, emergency and so on).
+    columns:
+      - name: encounter_id
+        tests: [unique, not_null]
+      - name: patient_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_patient')
+                field: patient_id
+      - name: encounter_class
+        tests:
+          - accepted_values:
+              arguments:
+                values: [ambulatory, emergency, inpatient, outpatient, urgentcare, wellness, hospice, home, snf, virtual]
+  - name: fact_condition
+    description: One row per diagnosis, linked to the encounter where it was recorded.
+    columns:
+      - name: encounter_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('fact_encounter')
+                field: encounter_id
+  - name: fact_admission
+    description: One row per hospital stay, with a 30-day readmission flag.
+    columns:
+      - name: encounter_id
+        tests: [unique, not_null]
+      - name: readmitted_30d
+        tests: [not_null]
+  - name: agg_quality_checks
+    description: Summary table for the Streamlit data quality tab.

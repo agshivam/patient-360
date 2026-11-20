@@ -6,3 +6,6 @@ tools/
 data/raw/
 data/*.duckdb
 .DS_Store
+dbt/target/
+dbt/logs/
+dbt/dbt_packages/

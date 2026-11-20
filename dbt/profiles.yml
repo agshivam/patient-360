@@ -1,0 +1,8 @@
+# Used when you run dbt from this folder: `dbt build` (dbt picks up profiles.yml in the current directory).
+patient360:
+  target: duckdb
+  outputs:
+    duckdb:
+      type: duckdb
+      path: ../data/patient360.duckdb
+      threads: 4
