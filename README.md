@@ -1,8 +1,8 @@
 # Patient-360
 
-A healthcare data platform built on **synthetic** patients (Synthea). No real patient data is used anywhere.
+A governed data platform for sensitive records, built on **synthetic** patient data (Synthea). No real personal data is used anywhere.
 
-The goal is to mirror how a hospital using Epic organizes data: operational tables first (Clarity style), then a reporting star schema (Caboodle style), then reports. This repo is built in stages.
+The goal is the classic enterprise layout: operational source tables first, normalized tables next, then a reporting star schema, then reports (modeled on how Epic organizes its data). This repo is built in stages.
 
 | Stage | Status |
 |---|---|
@@ -14,7 +14,7 @@ The goal is to mirror how a hospital using Epic organizes data: operational tabl
 
 ## Architecture
 
-The layers follow how a hospital that uses Epic organizes its data. Epic stores live data in Chronicles, copies it to Clarity (normalized tables) overnight, and then builds Caboodle (a star schema for reporting). This project mirrors that flow with synthetic data.
+The layers follow a proven enterprise pattern, modeled on Epic. Epic stores live data in Chronicles, copies it to Clarity (normalized tables) overnight, and then builds Caboodle (a star schema for reporting). This project mirrors that flow with synthetic data.
 
 ```mermaid
 flowchart LR
